@@ -1,0 +1,8 @@
+Include src/Camera.h
+Include src/SaveImage.h
+Include src/Gradient.h
+Include src/Grayscale.h
+Include src/ImageExtractChannel.h
+Include src/Binarize.h
+Library libpg_vision.so
+Library jpeg
