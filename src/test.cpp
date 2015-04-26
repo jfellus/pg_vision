@@ -7,6 +7,15 @@
 
 #include "Camera.h"
 #include "SaveImage.h"
+#include "Binarize.h"
+#include "Grayscale.h"
+#include "ImageExtractChannel.h"
+#include "Ptcg.h"
+#include "Convolution.h"
+#include "DoG.h"
+#include "GiveFocuspoint.h"
+#include "LogPolar.h"
+#include "ThetaPopulationCoding.h"
 
 int main(int argc, char **argv) {
 	try {

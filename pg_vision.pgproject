@@ -4,5 +4,14 @@ Include src/Gradient.h
 Include src/Grayscale.h
 Include src/ImageExtractChannel.h
 Include src/Binarize.h
+Include src/Ptcg.h
+Include src/Convolution.h
+Include src/DoG.h
+Include src/Gaussian.h
+Include src/GiveFocuspoint.h
+Include src/LogPolar.h
+Include src/ThetaPopulationCoding.h
 Library libpg_vision.so
 Library jpeg
+#CFLAG -fopenmp
+#LDFLAG -fopenmp 

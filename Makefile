@@ -37,7 +37,7 @@ all: $(EXECUTABLE) $(LIBRARY)
 $(EXECUTABLE): $(OBJS)
 
 CXXFLAGS := -fPIC -g -rdynamic -Wall -MMD $(addprefix -I,$(INCLUDE_PATHS))
-LDFLAGS := -fPIC -rdynamic  $(addprefix -l,$(REQUIRED_LIBS))
+LDFLAGS := -fPIC -rdynamic  $(addprefix -l,$(REQUIRED_LIBS)) 
 DEPENDS = $(OBJS:.o=.d)    
 
 $(LIBRARY) : $(OBJS)

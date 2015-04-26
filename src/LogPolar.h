@@ -20,92 +20,75 @@ and, more generally, to use and operate it in the same conditions as regards sec
 The fact that you are presently reading this means that you have had knowledge of the CeCILL v2.1 license and that you accept its terms.
  */
 
+
+
 #include <pg.h>
-#include <math.h>
-#include "imgproc/gradient.h"
+#include <image.h>
+#include <matrix.h>
+#include "imgproc/rho_theta.h"
 
 
-class Gradient {
+
+class LogPolar {
 public:
+	uint side; // side of a Logpolar descriptor (dimension is always <side>x<side> )
+	uint nbMaxDescriptors;
 
-	bool bSmoothing;
-	float alpha; // in R+ : Gaussian smoothing diffusion factor
+	Matrix out; // Output descriptors (one per row)
 
-	char postProcessingMode; // in {'I','C','M'}
-	float threshold;
+	float r, R; // Inner & outer radiuses
 
-	Image out;
-
-	OUTPUT(Image, out)
+	OUTPUT(Matrix, out)
+	OUTPUT(uint, out.h)
 
 private:
-
-	Image lh,lv;
+	uint dim;
+	uint **lookup;
 
 public:
+	LogPolar() {
+		side = 16;
+		r = 5;
+		R = 21;
+		nbMaxDescriptors = 200;
 
-	Gradient() {
-		bSmoothing = true;
-		postProcessingMode = 'I';
-		alpha = 1;
-		threshold = 0;
+		dim = 0; lookup = 0;
 	}
 
 	void init() {
-		init_my_sqrt();
+		dim = side*side;
 	}
 
-	void process(const Image& in) {
-		if(bSmoothing) compute_smoothed_gradient(in);
-		else compute_gradient(in);
-		post_processing(in);
-	}
+	void process(const Image& in, const Matrix& focuspoints) {
+		if(!out) {
+			lookup = init_lookup(in.w, in.h, r, R);
+			out.init(nbMaxDescriptors, dim);
+		}
 
-protected:
+		out.h = focuspoints.h;
 
-	Image tmp;
-	inline void compute_smoothed_gradient(const Image& in) {
-		tmp = in;
-
-		filtre_ghv(tmp, alpha, in.w, in.h);
-
-		float D0 = 0, D1 = 0, S0 = 0, S1 = 0;
-		if(!lh) lh.init(in.w, in.h);
-		if(!lv) lv.init(in.w, in.h);
-		for (uint j = 1; j < in.n - in.w; j++) {
-			D1 = tmp[j + in.w] - tmp[j] ;
-			S1 = tmp[j + in.w] + tmp[j] ;
-			S1 /= 2.0;
-			lh[j - 1] = (D0 + D1)/2.0;
-			lv[j - 1] = (S1 - S0);
-			S0 = S1;
-			D0 = D1;
+//		#pragma omp parallel for
+		for(uint i=0; i<focuspoints.h; i++) {
+			const float* focuspoint = &focuspoints[i*focuspoints.w];
+			compute_log_polar(in, &out[out.w*i], (int)focuspoint[0], (int)focuspoint[1], focuspoint[2]);
 		}
 	}
 
-	inline void compute_gradient(const Image& in) {
-		lv = lh = in;
-		fh_ghv(lv, alpha, in.w, in.h);
-		fv_ghv(lh, alpha, in.w, in.h);
-	}
 
-	inline void post_processing(const Image& in) {
-		if(!out) out.init(in.w, in.h);
-
-		// Mode I : trimmed analog magnitude
-		if (postProcessingMode == 'I') {
-			for (uint i = in.n; i--; ) out[i] = (fabs(lh[i]) + fabs(lv[i]))/2;
-			if(threshold>0) for (uint i = in.n; i--; ) out[i] = out[i] < threshold ? 0 : out[i];
-		}
-		// Mode C : binarized magnitude
-		else if (postProcessingMode == 'C') {
-			float th = threshold*2;
-			for (uint i = in.n; i--; ) {
-				out[i] = fabs(lh[i])+ fabs(lv[i]);
-				out[i] = out [i] < th ? 0 : 1;
+	void compute_log_polar(const Image& in, float* out, int x, int y, float v) {
+		int offset_center = x + y * in.w;
+		for (uint i = 0; i < dim; i++) {
+			float sum = 0;
+			for (uint k = 0; k < lookup[i][0]; k++) {
+				int offset = lookup[i][k + 1] + offset_center;
+				if (offset >= 0 && offset < (int)in.n)  sum += in[offset];
 			}
+			out[i] = sum / lookup[i][0];
 		}
-		// Mode M : analog vertical gradient
-		else if (postProcessingMode == 'M') out = lv;
+	}
+
+	uint** init_lookup(uint w, uint h, float r, float R) {
+		return init_lookup_rho_theta(w,h,side,dim,r,R);
 	}
 };
+

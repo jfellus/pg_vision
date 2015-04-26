@@ -32,12 +32,12 @@ private:
 
 	void process(const ImageRGB& in) {
 		if(!out) out.init(in.w, in.h);
-		for(uint i=out.n-1; i--; ) out[i] = in[i*3 + offset];
+		for(uint i=out.n; i--; ) out[i] = in[i*3 + offset];
 	}
 
 	void process(const ImageRGB& in, int offset) {
 		if(!out) out.init(in.w, in.h);
-		for(uint i=out.n-1; i--; ) out[i] = in[i*3 + offset];
+		for(uint i=out.n; i--; ) out[i] = in[i*3 + offset];
 	}
 
 };
@@ -54,7 +54,7 @@ public:
 
 	void process(const ImageRGB& in) {
 		if(!out) out.init(in.w, in.h);
-		for(uint i=out.n-1; i--; ) out[i] = in[i*3]/255.0;
+		for(uint i=out.n; i--; ) out[i] = in[i*3]/255.0;
 	}
 };
 
@@ -68,7 +68,7 @@ public:
 
 	void process(const ImageRGB& in) {
 		if(!out) out.init(in.w, in.h);
-		for(uint i=out.n-1; i--; ) out[i] = in[i*3+1]/255.0;
+		for(uint i=out.n; i--; ) out[i] = in[i*3+1]/255.0;
 	}
 };
 
@@ -82,7 +82,7 @@ public:
 
 	void process(const ImageRGB& in) {
 		if(!out) out.init(in.w, in.h);
-		for(uint i=out.n-1; i--; ) out[i] = in[i*3+2]/255.0;
+		for(uint i=out.n; i--; ) out[i] = in[i*3+2]/255.0;
 	}
 };
 

@@ -25,7 +25,7 @@ public:
 
 	void process(const Image& in, float threshold) {
 		if(!out) out.init(in.w, in.h);
-		for(uint i=out.n-1; i--;) out[i] = (in[i] >= threshold);
+		for(uint i=out.n; i--;) out[i] = (in[i] >= threshold);
 	}
 
 	void process(const Image& in) { process(in, threshold); }
