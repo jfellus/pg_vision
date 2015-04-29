@@ -65,7 +65,7 @@ public:
 			out.init(nbMaxDescriptors, dim);
 		}
 
-		out.h = focuspoints.h;
+		out.set_height(focuspoints.h);
 
 //		#pragma omp parallel for
 		for(uint i=0; i<focuspoints.h; i++) {

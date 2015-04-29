@@ -30,7 +30,7 @@ public:
 
 	void process(const Matrix& focuspoints) {
 		if(!out) out.init(nbMaxObservations, nbNeurons);
-		out.h = MIN(nbMaxObservations,focuspoints.h);
+		out.set_height(MIN(nbMaxObservations,focuspoints.h));
 
 //		#pragma omp parallel for
 		for(uint i=0; i<focuspoints.h; i++) {

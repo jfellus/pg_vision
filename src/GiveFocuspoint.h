@@ -33,7 +33,7 @@ public:
 	}
 
 	void process(const Image& in) {
-		out.h = 0;
+		out.set_height(0);
 		for(uint y = 0; y < in.h; y++) {
 			for(uint x = 0; x < in.w; x++) {
 				float v = in(x,y);
@@ -41,7 +41,7 @@ public:
 					out[out.h*3] = x;
 					out[out.h*3 +1] = y;
 					out[out.h*3 +2] = v;
-					if(out.h < nbMaxFocuspoints) out.h++;
+					if(out.h < nbMaxFocuspoints) out.set_height(out.h+1);
 				}
 			}
 		}
