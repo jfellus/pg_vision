@@ -48,7 +48,7 @@ float convolution(const Image& in, const Image& mask, Image& out, float threshol
 	if(threshold==0) return convolution(in, mask, out);
 	float maxval = -99999999;
 
-//	#pragma omp parallel for reduction (max:maxval)
+	#pragma omp parallel for reduction (max:maxval)
 	for(uint y=mask.h/2; y<out.h-mask.h/2; y++) {
 		int offset_y = y*out.w;
 		float* pout = &out[offset_y];
@@ -65,7 +65,7 @@ float convolution(const Image& in, const Image& mask, Image& out, float threshol
 	}
 
 
-//#pragma omp parallel for
+	#pragma omp parallel for
 	for(uint i=0; i<out.n; i++) out[i] /= maxval;
 
 	return maxval;

@@ -16,6 +16,11 @@
 #include "GiveFocuspoint.h"
 #include "LogPolar.h"
 #include "ThetaPopulationCoding.h"
+#include "Equalize.h"
+#include "HoG.h"
+#include "Gradient.h"
+#include "Orientations8.h"
+#include "Subsample.h"
 
 int main(int argc, char **argv) {
 	try {

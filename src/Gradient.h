@@ -109,3 +109,53 @@ protected:
 		else if (postProcessingMode == 'M') out = lv;
 	}
 };
+
+
+class GradientX {
+public:
+	Image out;
+	OUTPUT(Image, out)
+public:
+	void init() {}
+
+	void process(const Image& in) {
+		if(!out) {out.init(in.w, in.h);}
+		memcpy(&out[1], &in[2], (in.w*in.h-2)*sizeof(float));
+		for(uint i = 0 ; i < in.h ; i++) vec_sub(&out[i*out.w+1], &in[i*in.w], in.w-2);
+	}
+
+private:
+	void vec_sub(float* v1, const float* v2, uint dim) { for(uint i=dim; i--;) v1[i]-=v2[i]; }
+};
+
+
+class GradientY {
+public:
+	Image out;
+	OUTPUT(Image, out)
+public:
+	void init() {}
+
+	void process(const Image& in) {
+		if(!out) {out.init(in.w, in.h);}
+		memcpy(&out[out.w], &in[2*in.w], in.w*(in.h-2)*sizeof(float));
+		for(uint i = 1 ; i < out.h-1 ; i++) vec_sub(&out[i*out.w], &in[(i-1)*in.w], in.w);
+	}
+
+private:
+	void vec_sub(float* v1, const float* v2, uint dim) { for(uint i=dim; i--;) v1[i]-=v2[i]; }
+};
+
+
+class GradientMagnitude {
+public:
+	Image out;
+	OUTPUT(Image, out)
+public:
+	void init() {}
+
+	void process(const Image& gx, const Image& gy) {
+		if(!out) out.init(gx.w, gx.h);
+		for(uint i=out.w*out.h; i--;) out[i] = sqrt(gx[i]*gx[i]+gy[i]*gy[i]);
+	}
+};

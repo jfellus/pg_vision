@@ -67,7 +67,7 @@ public:
 
 		out.set_height(focuspoints.h);
 
-//		#pragma omp parallel for
+		#pragma omp parallel for
 		for(uint i=0; i<focuspoints.h; i++) {
 			const float* focuspoint = &focuspoints[i*focuspoints.w];
 			compute_log_polar(in, &out[out.w*i], (int)focuspoint[0], (int)focuspoint[1], focuspoint[2]);

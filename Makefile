@@ -36,8 +36,8 @@ TEST_OBJS := $(addprefix bin/,$(TEST_SRC:.cpp=.o))
 all: $(EXECUTABLE) $(LIBRARY)
 $(EXECUTABLE): $(OBJS)
 
-CXXFLAGS := -fPIC -g -rdynamic -Wall -MMD $(addprefix -I,$(INCLUDE_PATHS))
-LDFLAGS := -fPIC -rdynamic  $(addprefix -l,$(REQUIRED_LIBS)) 
+CXXFLAGS := -fPIC -fopenmp -g -rdynamic -Wall -MMD $(addprefix -I,$(INCLUDE_PATHS))
+LDFLAGS := -fPIC -fopenmp -rdynamic  $(addprefix -l,$(REQUIRED_LIBS)) 
 DEPENDS = $(OBJS:.o=.d)    
 
 $(LIBRARY) : $(OBJS)

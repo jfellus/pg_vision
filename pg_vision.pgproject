@@ -11,7 +11,12 @@ Include src/Gaussian.h
 Include src/GiveFocuspoint.h
 Include src/LogPolar.h
 Include src/ThetaPopulationCoding.h
+Include src/RGB2lum.h
+Include src/Equalize.h
+Include src/HoG.h
+Include src/Orientations8.h
+Include src/Subsample.h
 Library libpg_vision.so
 Library jpeg
-#CFLAG -fopenmp
-#LDFLAG -fopenmp 
+CFLAG -fopenmp
+LDFLAG -fopenmp 
