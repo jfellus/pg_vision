@@ -121,6 +121,8 @@ public:
 	void process(const Image& in) {
 		if(!out) {out.init(in.w, in.h);}
 		memcpy(&out[1], &in[2], (in.w*in.h-2)*sizeof(float));
+
+#pragma omp parallel for
 		for(uint i = 0 ; i < in.h ; i++) vec_sub(&out[i*out.w+1], &in[i*in.w], in.w-2);
 	}
 
@@ -139,6 +141,8 @@ public:
 	void process(const Image& in) {
 		if(!out) {out.init(in.w, in.h);}
 		memcpy(&out[out.w], &in[2*in.w], in.w*(in.h-2)*sizeof(float));
+
+#pragma omp parallel for
 		for(uint i = 1 ; i < out.h-1 ; i++) vec_sub(&out[i*out.w], &in[(i-1)*in.w], in.w);
 	}
 

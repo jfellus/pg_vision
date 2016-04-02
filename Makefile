@@ -36,7 +36,7 @@ TEST_OBJS := $(addprefix bin/,$(TEST_SRC:.cpp=.o))
 all: $(EXECUTABLE) $(LIBRARY) install index
 $(EXECUTABLE): $(OBJS)
 
-CXXFLAGS := -fPIC -fopenmp -g -rdynamic -Wall -MMD $(addprefix -I,$(INCLUDE_PATHS))
+CXXFLAGS := -DDEBUG -fPIC -fopenmp -g -rdynamic -Wall -MMD $(addprefix -I,$(INCLUDE_PATHS))
 LDFLAGS := -fPIC -fopenmp -rdynamic  $(addprefix -l,$(REQUIRED_LIBS)) 
 DEPENDS = $(OBJS:.o=.d)    
 

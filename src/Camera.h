@@ -28,6 +28,13 @@ public:
 		path = "/dev/video0";
 	}
 
+	~Camera() {
+		if(v4lin) {
+			v4lin->stop();
+			delete v4lin;
+		}
+	}
+
 	void init() {
 		v4lin = new V4LIn(path.c_str());
 		frame.w = v4lin->w;

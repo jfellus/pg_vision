@@ -19,9 +19,18 @@ public:
 	Image out;
 	OUTPUT(Image, out)
 
+	PARAM(float, threshold, {});
+
 	Binarize() { threshold = 0.5; }
 
 	void init() {}
+
+	void process(const Matrix& in, float threshold) {
+		if(!out) out.init(in.w, in.h);
+		for(uint i=out.n; i--;) out[i] = (in[i] >= threshold);
+	}
+
+	void process(const Matrix& in) { process(in, threshold); }
 
 	void process(const Image& in, float threshold) {
 		if(!out) out.init(in.w, in.h);

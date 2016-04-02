@@ -31,13 +31,16 @@ public:
 			mag.init(gx.w, gx.h);
 		}
 
-		// Compute gradient_magnitude
-		for(uint i=mag.w*mag.h; i--;) mag[i] = sqrt(gx[i]*gx[i]+gy[i]*gy[i]);
 
 		// Compute orientation bins
 		for(uint ori=0; ori<8; ori++) out[ori] = 0;
-		for(uint i=mag.w*mag.h; i--;) {
+
+#pragma omp parallel for
+		for(uint i=0; i<mag.w*mag.h; i++) {
+			// Compute gradient_magnitude
+			mag[i] = sqrt(gx[i]*gx[i]+gy[i]*gy[i]);
 			if(mag[i]<1e-20) continue;
+
 			float angle = atan2f_mod2pi(gy[i], gx[i]) * 4 * M_1_PI; // Rescale angle in [0,8]
 
 			int ori = ((int)floorf(angle) % 8);

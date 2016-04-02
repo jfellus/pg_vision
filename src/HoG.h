@@ -27,10 +27,15 @@ public:
 	uint step;
 	uint scale;
 	float clamp;
+	float threshold_energy;
 	uint nbMax;
+	bool bKeepNull;
+	bool bKeepCoords;
 
 	Matrix out;
+	Matrix coordinates;
 	OUTPUT(Matrix, out)
+	OUTPUT(float, threshold_energy)
 
 private:
 	uint w,h;
@@ -38,6 +43,9 @@ private:
 
 public:
 	HoG() {
+		threshold_energy = 1;
+		bKeepCoords = false;
+		bKeepNull = false;
 		step = 2;
 		scale = 4;
 		clamp = 0.2f;
@@ -55,6 +63,7 @@ public:
 			h = orientations[0].h;
 			if(!nbMax) nbMax = get_nb_hogs(w,h);
 			out.init(nbMax, 128);
+			if(bKeepCoords) coordinates.init(nbMax, 2);
 
 			rwidth = w - 1 - scale*4;
 			rheight = h - 1 - scale*4;
@@ -63,12 +72,24 @@ public:
 		compute_orientation_integral(orientations);
 
 		out.set_height(0);
+		coordinates.set_height(0);
+		if(bKeepNull) out.clear();
+
+//#pragma omp parallel for
 		for(uint y = 1 ; y < rheight ; y+=step) {
 			for(uint x = 1 ; x < rwidth ; x+=step) {
-				if(extract_hog(x,y, orientations, out.get_row(out.h))) out.set_height(out.h+1);
-				if(out.h>=nbMax) return;
+				if(out.h<nbMax)
+					if(extract_hog(x,y, orientations, out.get_row(out.h)) || bKeepNull) {
+						out.set_height(out.h+1);
+						if(bKeepCoords) {
+							coordinates(coordinates.h, 0) = x + scale*2;
+							coordinates(coordinates.h, 1) = y + scale*2;
+							coordinates.set_height(coordinates.h+1);
+						}
+					}
 			}
 		}
+
 	}
 
 
@@ -123,11 +144,11 @@ private:
 
 		// L2-normalize (cancel low-energy HoGs)
 		float ndes = vec_n2(out, 128);
-		if(ndes <= 1e-5) return false;
+		if(ndes <= threshold_energy) return false;
 		vec_div(out, ndes, 128);
 
 		// Clamp
-		for(size_t x = 0 ; x < 128 ; x++) if(out[x] > clamp) out[x] = 0.2f;
+		for(size_t x = 0 ; x < 128 ; x++) if(out[x] > clamp) out[x] = clamp;
 
 		// L2-normalize
 		ndes = vec_n2(out, 128);

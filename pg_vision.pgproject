@@ -16,6 +16,16 @@ Include src/Equalize.h
 Include src/HoG.h
 Include src/Orientations8.h
 Include src/Subsample.h
+Include src/Image2Matrix.h
+Include src/Matrix2Image.h
+Include src/MultiplyImage.h
+Include src/RedishBluish.h
+Include src/GaussianSupersample.h
+Include src/Patches.h
+Include src/PrimitiveClassifier.h
+Include src/LoadImage.h
+Include src/Colorish.h
+Include src/ImageAtPoints.h
 Library libpg_vision.so
 Library jpeg
 CFLAG -fopenmp
